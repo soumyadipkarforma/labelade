@@ -86,6 +86,33 @@ class PluginTests(unittest.TestCase):
 		self.focus(nv.FakeObject("", aid="sendButton"))
 		self.assertEqual(nv.spoken, [])
 
+	def test_first_run_downloads_a_vision_model(self):
+		empty = MockLemonade(models=[{"id": "Qwen3-0.6B-GGUF", "labels": ["chat"]}])
+		conf = sys.modules["config"].conf["labelade"]
+		conf["serverUrl"] = empty.url
+		try:
+			plugin = plugin_module.GlobalPlugin()
+			self.assertTrue(wait_for(lambda: "Labelade's vision model is ready." in nv.spoken))
+			self.assertIn("downloading its vision model, Qwen3-VL-4B-Instruct-GGUF", nv.spoken[0])
+			self.assertEqual([r for r in empty.requests if "model_name" in r], [{"model_name": "Qwen3-VL-4B-Instruct-GGUF", "stream": False}])
+			plugin.terminate()
+			nv.spoken.clear()
+			plugin = plugin_module.GlobalPlugin()  # next start: the model is there, so nothing is downloaded or said
+			time.sleep(0.3)
+			nv.run_queue()
+			self.assertEqual(nv.spoken, [])
+			plugin.terminate()
+			conf["autoDownload"] = False
+			empty.models[:] = []
+			plugin = plugin_module.GlobalPlugin()
+			time.sleep(0.3)
+			nv.run_queue()
+			self.assertEqual(len([r for r in empty.requests if "model_name" in r]), 1)  # turned off: never downloads
+			plugin.terminate()
+		finally:
+			conf["serverUrl"], conf["autoDownload"] = self.mock.url, True
+			empty.close()
+
 	def test_labelled_controls_are_left_alone(self):
 		self.focus(nv.FakeObject("Send"))
 		self.focus(nv.FakeObject("", role=nv.Role.EDITABLETEXT))

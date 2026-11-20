@@ -32,10 +32,11 @@ The paid screen reader JAWS has started selling an AI labeller for this. NVDA us
 ## Quick start
 
 1. Install [Lemonade Server](https://lemonade-server.ai) and start it.
-2. In the Lemonade app's model manager, download **Qwen3-VL-4B-Instruct-GGUF** (about 3.3 GB).
-3. Download `labelade-0.1.0.nvda-addon` from [Releases](https://github.com/soumyadipkarforma/labelade/releases), open it and restart NVDA.
-4. NVDA menu, Preferences, Settings, Labelade, then **Test connection**.
-5. Tab through any app with unlabelled buttons.
+2. Download `labelade-0.1.0.nvda-addon` from [Releases](https://github.com/soumyadipkarforma/labelade/releases), open it and restart NVDA.
+3. That's it. If Lemonade has no vision model yet, Labelade downloads **Qwen3-VL-4B-Instruct-GGUF** (about 3.3 GB) through Lemonade by itself and tells you when it's ready.
+4. Tab through any app with unlabelled buttons.
+
+To check the setup at any time: NVDA menu, Preferences, Settings, Labelade, **Test connection**.
 
 The full guide, also included in the add-on, is [docs/USER-GUIDE.md](docs/USER-GUIDE.md).
 

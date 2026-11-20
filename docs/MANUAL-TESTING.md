@@ -6,6 +6,7 @@ Automated tests run without NVDA. Before each release, run through this list in 
 
 - [ ] Lemonade Server running, a vision model downloaded (Qwen3-VL-4B-Instruct-GGUF).
 - [ ] Add-on installed from the built `.nvda-addon`; NVDA restarted.
+- [ ] With no vision model in Lemonade, starting NVDA says "downloading its vision model", then "vision model is ready"; the model appears in Lemonade.
 - [ ] Settings, Labelade, Test connection names the model.
 - [ ] Test connection with Lemonade stopped gives "Can't reach Lemonade".
 - [ ] Input gestures lists a Labelade category with 7 commands.

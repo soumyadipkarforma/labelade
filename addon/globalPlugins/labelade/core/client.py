@@ -22,6 +22,10 @@ class LemonadeError(Exception):
 	"""Raised with a message that is safe and useful to speak to the user."""
 
 
+class NoVisionModel(LemonadeError):
+	"""Lemonade is running but has no vision model downloaded."""
+
+
 def is_local(url: str) -> bool:
 	host = (urllib.parse.urlparse(url).hostname or "").lower()
 	return host in ("localhost", "127.0.0.1", "::1") or host.endswith(".localhost")
@@ -69,7 +73,7 @@ class LemonadeClient:
 			return preferred
 		vision = [m["id"] for m in self.models() if "vision" in (m.get("labels") or [])]
 		if not vision:
-			raise LemonadeError(
+			raise NoVisionModel(
 				"No vision model is downloaded in Lemonade. Download one, for example "
 				"Qwen3-VL-4B-Instruct-GGUF, in the Lemonade app's model manager."
 			)
@@ -84,6 +88,10 @@ class LemonadeClient:
 			if model in vision:
 				return model
 		return vision[0]
+
+	def pull(self, model: str) -> None:
+		"""Download a model from Lemonade's catalogue. Blocks until done, so give this client a long timeout."""
+		self._request("POST", "/pull", {"model_name": model, "stream": False})
 
 	def chat(self, model: str, messages: list[dict], max_tokens: int = 256) -> str:
 		reply = self._request("POST", "/chat/completions", {

@@ -31,7 +31,7 @@ def default_reply(messages: list[dict]) -> str:
 class MockLemonade:
 	def __init__(self, port: int = 0, api_key: str = "", models=None, loaded=(), reply=default_reply):
 		self.requests: list[dict] = []
-		self.models, self.loaded, self.reply, self.api_key = models if models is not None else MODELS, list(loaded), reply, api_key
+		self.models, self.loaded, self.reply, self.api_key = list(models if models is not None else MODELS), list(loaded), reply, api_key
 		mock = self
 
 		class Handler(BaseHTTPRequestHandler):
@@ -68,6 +68,10 @@ class MockLemonade:
 					return
 				body = json.loads(self.rfile.read(int(self.headers.get("Content-Length", 0))) or b"{}")
 				mock.requests.append(body)
+				if self.path.replace("/api/v1", "/v1") == "/v1/pull":
+					mock.models.append({"id": body["model_name"], "labels": ["chat", "vision"], "recipe": "llamacpp", "downloaded": True})
+					self._send(200, {"model_name": body["model_name"], "status": "success"})
+					return
 				if self.path.replace("/api/v1", "/v1") != "/v1/chat/completions":
 					self._send(404, {"error": {"message": "not found"}})
 					return

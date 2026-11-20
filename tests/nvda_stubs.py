@@ -55,7 +55,7 @@ class _Conf(dict):
 def install():
 	builtins._ = lambda s: s
 	conf = _Conf()
-	conf["labelade"] = {"serverUrl": "", "apiKey": "", "model": "", "autoLabel": True, "beep": True}
+	conf["labelade"] = {"serverUrl": "", "apiKey": "", "model": "", "autoLabel": True, "beep": True, "autoDownload": True}
 	_module("addonHandler", initTranslation=lambda: None)
 	_module("api",
 		getFocusObject=lambda: state.focus, getNavigatorObject=lambda: state.navigator,

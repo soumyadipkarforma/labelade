@@ -24,10 +24,14 @@ jobs:
           echo "$out"
           file=$(echo "$out" | cut -d' ' -f1)
           [[ "$file" == *"labelade-${GITHUB_REF_NAME#v}.nvda-addon" ]] || { echo "tag does not match version"; exit 1; }
+          # The .nvda-addon is already a zip; the .zip copy is for installing by hand into NVDA's addons folder.
+          zip="${file%.nvda-addon}.zip"
+          cp "$file" "$zip"
+          (cd dist && sha256sum *.nvda-addon *.zip > SHA256SUMS.txt && cat SHA256SUMS.txt)
           echo "FILE=$file" >> "$GITHUB_ENV"
-          echo "$out" > dist/SHA256.txt
+          echo "ZIP=$zip" >> "$GITHUB_ENV"
       - name: Create release
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" "$FILE" dist/SHA256.txt --title "Labelade $GITHUB_REF_NAME" --generate-notes
+        run: gh release create "$GITHUB_REF_NAME" "$FILE" "$ZIP" dist/SHA256SUMS.txt --title "Labelade $GITHUB_REF_NAME" --notes-file docs/RELEASE-NOTES.md

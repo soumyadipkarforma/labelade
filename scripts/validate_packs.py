@@ -37,7 +37,10 @@ def main(paths: list[str]) -> int:
 	failed = 0
 	for path in paths:
 		errors = check(path)
-		name = os.path.relpath(path, ROOT)
+		try:
+			name = os.path.relpath(path, ROOT)
+		except ValueError:  # Windows: a pack on another drive has no relative path
+			name = path
 		if errors:
 			failed += 1
 			print(f"FAIL {name}")

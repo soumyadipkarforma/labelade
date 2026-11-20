@@ -6,14 +6,14 @@ Labelade gives names to unlabelled buttons, links and icons, so NVDA says "Send 
 
 - NVDA 2025.1 or later.
 - Lemonade Server running on the same computer, from [lemonade-server.ai](https://lemonade-server.ai).
-- A vision model downloaded in Lemonade. Qwen3-VL-4B-Instruct-GGUF is a good first choice: about 3.3 GB, and it reads small icons and text well. See "Choosing a model" below.
+- A vision model in Lemonade. You don't have to get one yourself: if Lemonade has none, Labelade downloads Qwen3-VL-4B-Instruct-GGUF (about 3.3 GB), which reads small icons and text well. See "Choosing a model" below.
 
 ## Getting started
 
 1. Install Lemonade Server and start it.
-2. In the Lemonade app, open the model manager and download Qwen3-VL-4B-Instruct-GGUF.
-3. Install Labelade: open the `labelade-0.1.0.nvda-addon` file and confirm, then restart NVDA.
-4. Open NVDA's menu, then Preferences, Settings, Labelade, and press Test connection. NVDA should say which model Labelade will use.
+2. Install Labelade: open the `labelade-0.1.0.nvda-addon` file and confirm, then restart NVDA.
+3. If Lemonade has no vision model yet, Labelade says "Labelade is downloading its vision model" and fetches Qwen3-VL-4B-Instruct-GGUF through Lemonade in the background. When it says "Labelade's vision model is ready", you can start. Controls you Tab to during the download are labelled as soon as it finishes. If Lemonade wasn't running when NVDA started, the download starts the first time Labelade tries to label something.
+4. To check the setup, open NVDA's menu, then Preferences, Settings, Labelade, and press Test connection. NVDA should say which model Labelade will use.
 5. Tab through an app that has unlabelled buttons. When you land on one, NVDA says "button" as usual. A moment later you hear a short beep and the new label.
 
 The first label after starting Lemonade takes longer, because Lemonade loads the model. After that labels come back much faster. How fast depends on the model and your PC.
@@ -59,6 +59,7 @@ NVDA menu, Preferences, Settings, Labelade:
 - **Vision model.** Leave empty and Labelade picks one: a vision model already loaded in Lemonade if there is one, otherwise the best one you've downloaded.
 - **Label unlabelled controls automatically when they get focus.** On by default. Turn it off to label only when you press NVDA+alt+L or NVDA+alt+W.
 - **Beep before a new AI label is spoken.** A short high tone tells you the name came from the AI.
+- **Download a vision model automatically if Lemonade has none.** On by default. Turn it off on a metered connection, or if you want to choose and download a model yourself in the Lemonade app.
 - **Test connection.** Checks that Lemonade is reachable and says which model will be used.
 
 ## Choosing a model

@@ -25,7 +25,7 @@ from logHandler import log
 from scriptHandler import script
 
 from .core import imaging
-from .core.client import DEFAULT_URL, LemonadeClient, LemonadeError, is_local
+from .core.client import DEFAULT_URL, PREFERRED_MODELS, LemonadeClient, LemonadeError, NoVisionModel, is_local
 from .core.heuristics import needs_label
 from .core.labeller import Labeller, Worker
 from .core.store import Label, LabelStore
@@ -39,6 +39,7 @@ config.conf.spec["labelade"] = {
 	"model": "string(default='')",
 	"autoLabel": "boolean(default=True)",
 	"beep": "boolean(default=True)",
+	"autoDownload": "boolean(default=True)",
 }
 
 _ROLE_KEYS = {}
@@ -208,6 +209,32 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		self._scan = None  # [queued, done, labelled, failed] while a window scan runs
 		NVDASettingsDialog.categoryClasses.append(LabeladePanel)
 		self._build_menu()
+		self._ensure_model()
+
+	def _ensure_model(self) -> None:
+		"""First run: if Lemonade has no vision model, download the recommended one in the background."""
+		if not _conf()["autoDownload"]:
+			return
+		model = PREFERRED_MODELS[0]
+
+		def work():
+			if any("vision" in (m.get("labels") or []) for m in LemonadeClient(_conf()["serverUrl"], _conf()["apiKey"], timeout=10).models()):
+				return None
+			# Translators: spoken once, when Labelade starts downloading its model.
+			text = _("Labelade is downloading its vision model, {model}, about 3.3 gigabytes. You'll hear when it's ready.")
+			_post(ui.message, text.format(model=model))
+			LemonadeClient(_conf()["serverUrl"], _conf()["apiKey"], timeout=6 * 3600).pull(model)
+			return model
+
+		def done(result, error):
+			if error and not (isinstance(error, LemonadeError) and "reach" in str(error)):  # Lemonade not started yet is normal
+				# Translators: spoken when the automatic model download fails.
+				ui.message(_("Labelade couldn't download its vision model. {error}").format(error=_error_text(error)))
+			elif result:
+				# Translators: spoken when the model download has finished.
+				ui.message(_("Labelade's vision model is ready."))
+
+		self.worker.submit("download-model", work, done)
 
 	def terminate(self):
 		self.worker.stop()
@@ -265,6 +292,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		def done(result, error):
 			entry = None
 			if error:
+				if isinstance(error, NoVisionModel):
+					self._ensure_model()  # Lemonade came up after NVDA did, still without a model
 				quiet = time.monotonic() < self._quiet_until
 				if isinstance(error, LemonadeError) and "reach" in str(error):
 					self._quiet_until = time.monotonic() + 60  # don't repeat "can't reach" on every Tab press
@@ -522,6 +551,8 @@ class LabeladePanel(SettingsPanel):
 		self.auto.SetValue(conf["autoLabel"])
 		self.beep = helper.addItem(wx.CheckBox(self, label=_("&Beep before a new AI label is spoken")))
 		self.beep.SetValue(conf["beep"])
+		self.download = helper.addItem(wx.CheckBox(self, label=_("&Download a vision model automatically if Lemonade has none (about 3.3 GB)")))
+		self.download.SetValue(conf["autoDownload"])
 		test = helper.addItem(wx.Button(self, label=_("&Test connection")))
 		test.Bind(wx.EVT_BUTTON, self._on_test)
 
@@ -550,6 +581,7 @@ class LabeladePanel(SettingsPanel):
 		conf["model"] = self.model.GetValue().strip()
 		conf["autoLabel"] = self.auto.GetValue()
 		conf["beep"] = self.beep.GetValue()
+		conf["autoDownload"] = self.download.GetValue()
 
 
 if globalVars.appArgs.secure:
