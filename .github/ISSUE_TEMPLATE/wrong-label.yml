@@ -1,0 +1,29 @@
+name: Wrong or missing label
+description: Labelade named a control wrongly, said it couldn't tell, or skipped it.
+labels: [labels]
+body:
+  - type: input
+    id: app
+    attributes:
+      label: App and version
+      placeholder: Discord 1.0.9170
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What NVDA said, and what the control actually does.
+      placeholder: 'It said "Settings, button" but the button starts a video call.'
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model
+      placeholder: Qwen3-VL-4B-Instruct-GGUF
+  - type: dropdown
+    id: theme
+    attributes:
+      label: Windows theme
+      options: [Dark, Light, High contrast]

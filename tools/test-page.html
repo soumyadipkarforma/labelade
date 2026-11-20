@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!-- A deliberately inaccessible page for testing Labelade: icon-only buttons with no accessible names.
+     Open it in a browser, press Tab, and listen. Don't copy these patterns into real pages. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Labelade test page: unlabelled buttons</title>
+<style>
+	body { font: 16px system-ui, sans-serif; margin: 2rem; background: #fff; color: #111; }
+	.bar { display: flex; gap: 12px; padding: 12px; border: 1px solid #ccc; border-radius: 8px; width: max-content; }
+	button { width: 44px; height: 44px; border: 1px solid #bbb; border-radius: 8px; background: #f6f6f6; display: grid; place-items: center; }
+	button:focus { outline: 3px solid #1a73e8; }
+	svg { width: 24px; height: 24px; fill: none; stroke: #222; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+	textarea { display: block; width: 420px; height: 80px; margin: 1rem 0; }
+</style>
+</head>
+<body>
+<h1>Message</h1>
+<textarea aria-label="Message"></textarea>
+<div class="bar">
+	<button><svg viewBox="0 0 24 24"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+	<button><svg viewBox="0 0 24 24"><path d="M21.4 11.1 12.2 20.3a6 6 0 0 1-8.5-8.5l9.2-9.2a4 4 0 0 1 5.7 5.7l-9.2 9.2a2 2 0 0 1-2.8-2.8l8.5-8.5"/></svg></button>
+	<button><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5"/></svg></button>
+	<button><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></button>
+	<button><svg viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg></button>
+	<button><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+</div>
+<p>Expected labels, in order: Send, Attach file, Voice message or Microphone, Emoji, Delete, Settings.</p>
+</body>
+</html>

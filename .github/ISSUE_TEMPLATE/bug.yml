@@ -1,0 +1,24 @@
+name: Bug
+description: Something doesn't work, freezes, or shows an error.
+labels: [bug]
+body:
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps
+      description: What you pressed, in which app.
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: NVDA log
+      description: Press NVDA+F1, copy the lines around "labelade". Remove anything private.
+      render: text
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      placeholder: NVDA 2026.3.1, Labelade 0.1.0, Lemonade 2026.46.2, Windows 11
+    validations:
+      required: true

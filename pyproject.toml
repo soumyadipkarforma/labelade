@@ -1,0 +1,17 @@
+# Not a pip package: NVDA add-ons ship as .nvda-addon zips (python tools/build.py).
+# This file only configures the linter.
+[tool.ruff]
+line-length = 150
+target-version = "py311"
+builtins = ["_"]  # NVDA's addonHandler.initTranslation() installs the gettext function
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "UP", "I"]
+ignore = ["W191", "E101", "E731"]  # NVDA's code style uses tabs; small lambdas are fine
+
+[tool.ruff.lint.isort]
+known-third-party = [
+	"addonHandler", "api", "config", "controlTypes", "globalPluginHandler", "globalVars", "gui",
+	"queueHandler", "screenBitmap", "tones", "ui", "wx", "logHandler", "scriptHandler",
+]
+known-first-party = ["core", "tests", "mock_lemonade", "build"]

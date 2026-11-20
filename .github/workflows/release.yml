@@ -1,0 +1,33 @@
+name: Release
+
+# Push a tag like v0.1.0 (matching ADDON["version"] in tools/build.py) to publish the add-on.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python -m unittest discover
+      - name: Build and check the version matches the tag
+        shell: bash
+        run: |
+          out=$(python tools/build.py)
+          echo "$out"
+          file=$(echo "$out" | cut -d' ' -f1)
+          [[ "$file" == *"labelade-${GITHUB_REF_NAME#v}.nvda-addon" ]] || { echo "tag does not match version"; exit 1; }
+          echo "FILE=$file" >> "$GITHUB_ENV"
+          echo "$out" > dist/SHA256.txt
+      - name: Create release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "$FILE" dist/SHA256.txt --title "Labelade $GITHUB_REF_NAME" --generate-notes

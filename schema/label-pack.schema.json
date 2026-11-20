@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/soumyadipkarforma/labelade/schema/label-pack.schema.json",
+  "title": "Labelade label pack",
+  "description": "Labels for one app's unlabelled controls. The add-on's validate_pack() in core/store.py is the authority; this schema mirrors it for editors.",
+  "type": "object",
+  "required": ["schemaVersion", "app", "labels"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "app": {
+      "description": "NVDA's app module name, usually the program's file name without .exe, e.g. discord.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.\\-]{1,64}$"
+    },
+    "labels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["role", "label"],
+        "additionalProperties": false,
+        "anyOf": [
+          { "required": ["automationId"], "properties": { "automationId": { "minLength": 1 } } },
+          { "required": ["hash"], "properties": { "hash": { "minLength": 1 } } }
+        ],
+        "properties": {
+          "role": { "type": "string", "minLength": 1, "examples": ["button", "link", "graphic", "togglebutton"] },
+          "label": { "type": "string", "minLength": 1, "maxLength": 80 },
+          "source": { "enum": ["user", "ai", "pack"], "default": "ai" },
+          "confidence": { "enum": ["high", "low"], "default": "high" },
+          "automationId": {
+            "description": "uia:<UI Automation id> or ia2:<DOM id>. Preferred: stable across machines.",
+            "type": "string"
+          },
+          "hash": {
+            "description": "64-bit difference hash of the control's pixels, 16 hex characters. Works without ids, but depends on theme.",
+            "type": "string",
+            "pattern": "^[0-9a-f]{16}$"
+          },
+          "model": { "type": "string", "description": "Model that produced an AI label." },
+          "updated": { "type": "integer", "minimum": 0 }
+        }
+      }
+    }
+  }
+}

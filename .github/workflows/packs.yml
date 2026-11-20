@@ -1,0 +1,19 @@
+name: Validate label packs
+
+# Packs are data from strangers: check them with the add-on's own rules, never run anything from the PR.
+on:
+  pull_request:
+    paths: ["packs/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: python scripts/validate_packs.py
